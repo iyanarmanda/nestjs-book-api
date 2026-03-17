@@ -9,9 +9,9 @@ export class BookCategorySeeder {
 	constructor(private readonly prisma: PrismaService) {}
 
 	async run(): Promise<void> {
-		const count = await this.prisma.bookCategory.count();
+		const existing = await this.prisma.bookCategory.findFirst();
 
-		if (count > 0) {
+		if (existing) {
 			this.logger.log('Book Categories already exist, skipping seed');
 			return;
 		}

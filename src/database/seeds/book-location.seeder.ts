@@ -9,9 +9,9 @@ export class BookLocationSeeder {
 	constructor(private readonly prisma: PrismaService) {}
 
 	async run(): Promise<void> {
-		const count = await this.prisma.bookLocation.count();
+		const existing = await this.prisma.bookLocation.findFirst();
 
-		if (count > 0) {
+		if (existing) {
 			this.logger.log('Book Locations already exist, skipping seed');
 			return;
 		}
