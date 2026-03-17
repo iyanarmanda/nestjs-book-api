@@ -13,7 +13,7 @@ export const getAllQueryBookSchema = z.strictObject({
 		.number()
 		.transform((v) => Math.floor(v))
 		.transform(clamp(1, 100))
-		.default(10),
+		.default(20),
 
 	createdAtSort: sortQuery,
 	titleSort: sortQuery,

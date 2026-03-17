@@ -25,7 +25,7 @@ export class BookService extends BaseService {
 
 	async getAll(query?: GetAllQueryBookDto): Promise<PaginatedResponse> {
 		const page = query?.page ?? 1;
-		const limit = query?.limit ?? 10;
+		const limit = query?.limit ?? 20;
 
 		const orderBy: Prisma.BookOrderByWithRelationInput[] = [];
 
