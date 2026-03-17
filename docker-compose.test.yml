@@ -1,14 +1,12 @@
-# readiness check: docker exec pg-test pg_isready -U postgres
+# readiness check: docker exec book-pg-test pg_isready -U postgres
 
 services:
   db:
     image: postgres:16
     restart: no
-    container_name: pg-test
+    container_name: book-pg-test
     ports:
-      - "5433:5432"
-    env_file:
-      - .env.test
+      - "${POSTGRES_PORT}:5432"
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
