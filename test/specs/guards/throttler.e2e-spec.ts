@@ -6,11 +6,14 @@ import { CoreModule } from '@/core/core.module';
 import { AuthModule } from '@/modules/auth/auth.module';
 import { throttlerConstant } from '@/modules/auth/throttler/throttler.constant';
 import { THROTTLER_ERROR_MSG } from '@/modules/auth/throttler/error-msg.constant';
+import { PrismaService } from '@/common/prisma/prisma.service';
+import { adminSeeder } from '$/seeds/models/admin/admin.seeder';
 
 import type { TestingModule } from '@nestjs/testing';
 
 describe('Throttler (e2e)', () => {
 	let app: INestApplication;
+	let prisma: PrismaService;
 
 	beforeAll(async () => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -34,6 +37,8 @@ describe('Throttler (e2e)', () => {
 
 		app = moduleFixture.createNestApplication();
 
+		prisma = moduleFixture.get(PrismaService);
+
 		app.setGlobalPrefix('api');
 
 		await app.init();
@@ -44,6 +49,8 @@ describe('Throttler (e2e)', () => {
 	});
 
 	it('should throw 429 after limit reached', async () => {
+		await adminSeeder(prisma);
+
 		const server = app.getHttpServer();
 		const route = '/api/auth/login';
 		const body = {

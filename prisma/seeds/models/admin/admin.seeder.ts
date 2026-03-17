@@ -1,6 +1,7 @@
-import 'dotenv/config';
-import { PrismaClient } from '@/generated/prisma/client';
+import 'config/env';
 import { hash } from 'bcrypt';
+
+import type { PrismaClient } from '@/generated/prisma/client';
 
 export async function adminSeeder(prisma: PrismaClient): Promise<void> {
 	const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;

@@ -22,6 +22,8 @@ import { z } from 'zod';
 					),
 
 					JWT_SECRET: z.string(),
+
+					DOTENV_CONFIG_QUIET: z.enum(['true', 'false']).default('true'),
 				});
 				return schema.parse(env);
 			},

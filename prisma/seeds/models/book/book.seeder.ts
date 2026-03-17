@@ -1,8 +1,9 @@
 import { PrismaClient } from '@/generated/prisma/client';
-import { bookData } from './data/book.data';
 
-export async function bookSeeder(prisma: PrismaClient): Promise<void> {
-	for (const book of bookData) {
+import type { BookData } from '@/database/seeds/data/interfaces/book.interface';
+
+export async function bookSeeder(prisma: PrismaClient, data: BookData[]): Promise<void> {
+	for (const book of data) {
 		await prisma.book.create({
 			data: {
 				title: book.title,

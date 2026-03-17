@@ -1,13 +1,13 @@
 import request from 'supertest';
 import { Test } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { CoreModule } from '@/core/core.module';
 import { AuthModule } from '@/modules/auth/auth.module';
 import { PrismaService } from '@/common/prisma/prisma.service';
-import { adminSeeder } from '#/database/seeds/admin.seeder';
-import { trucateDatabase } from '#/database/truncate';
-import { ADMIN_PASSWORD } from '#/database/constants/admin.constant';
+import { trucateDatabase } from '$/helper/truncate';
+import { adminSeeder } from '$/seeds/models/admin/admin.seeder';
 import { login } from '#/helper/auth.helper';
 
 import type { App } from 'supertest/types';
@@ -29,6 +29,9 @@ async function newPasswordCheck(
 describe('AuthModule (e2e)', () => {
 	let app: INestApplication<App>;
 	let prisma: PrismaService;
+	let configService: ConfigService;
+
+	let ADMIN_PASSWORD: string;
 
 	beforeAll(async () => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -43,8 +46,11 @@ describe('AuthModule (e2e)', () => {
 		app = moduleFixture.createNestApplication();
 
 		prisma = moduleFixture.get(PrismaService);
+		configService = moduleFixture.get(ConfigService);
 
 		app.setGlobalPrefix('api');
+
+		ADMIN_PASSWORD = configService.getOrThrow<string>('ADMIN_PASSWORD');
 
 		await app.init();
 	});

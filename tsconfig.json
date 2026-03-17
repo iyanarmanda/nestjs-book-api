@@ -17,6 +17,7 @@
 		"paths": {
 			"@/*": ["src/*"],
 			"#/*": ["test/*"],
+			"$/*": ["prisma/*"],
 			"mocks/*": ["__mocks__/*"]
 		},
 		"typeRoots": ["./node_modules/@types", "src/@types"],

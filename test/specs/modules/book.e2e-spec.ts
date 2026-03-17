@@ -7,12 +7,15 @@ import { AuthModule } from '@/modules/auth/auth.module';
 import { BookModule } from '@/modules/book/book.module';
 import { PrismaExceptionFilter } from '@/config/filters/prisma-exception.filter';
 import { PrismaService } from '@/common/prisma/prisma.service';
-import { adminSeeder } from '#/database/seeds/admin.seeder';
-import { bookCategorySeeder } from '#/database/seeds/book-category.seeder';
-import { bookLocationSeeder } from '#/database/seeds/book-location.seeder';
-import { bookSeeder } from '#/database/seeds/book.seeder';
-import { trucateDatabase } from '#/database/truncate';
+import { bookCategorySeeder } from '$/seeds/models/book-category/book-category.seeder';
+import { bookLocationSeeder } from '$/seeds/models/book-location/book-location.seeder';
+import { bookSeeder } from '$/seeds/models/book/book.seeder';
+import { adminSeeder } from '$/seeds/models/admin/admin.seeder';
+import { trucateDatabase } from '$/helper/truncate';
 import { login } from '#/helper/auth.helper';
+import { bookData } from '#/seeds/data/book.data';
+import { bookLocationData } from '#/seeds/data/book-location.data';
+import { bookCategoryData } from '#/seeds/data/book-category.data';
 
 import type { App } from 'supertest/types';
 import type { TestingModule } from '@nestjs/testing';
@@ -45,7 +48,10 @@ describe('BookModule (e2e)', () => {
 	beforeEach(async () => {
 		await trucateDatabase(prisma);
 
-		await Promise.all([bookCategorySeeder(prisma), bookLocationSeeder(prisma)]);
+		await Promise.all([
+			bookCategorySeeder(prisma, bookCategoryData),
+			bookLocationSeeder(prisma, bookLocationData),
+		]);
 	});
 
 	afterAll(async () => {
@@ -58,7 +64,7 @@ describe('BookModule (e2e)', () => {
 			const route = '/api/book';
 
 			it('should return paginated books without query', async () => {
-				await bookSeeder(prisma);
+				await bookSeeder(prisma, bookData);
 
 				const res = await request(app.getHttpServer()).get(route).expect(200);
 
@@ -74,7 +80,7 @@ describe('BookModule (e2e)', () => {
 			});
 
 			it('should return paginated books with pagination queries', async () => {
-				await bookSeeder(prisma);
+				await bookSeeder(prisma, bookData);
 
 				const res = await request(app.getHttpServer()).get(`${route}?page=1&limit=5`).expect(200);
 
@@ -84,7 +90,7 @@ describe('BookModule (e2e)', () => {
 			});
 
 			it('should return filtered books by title', async () => {
-				await bookSeeder(prisma);
+				await bookSeeder(prisma, bookData);
 
 				const res = await request(app.getHttpServer()).get(`${route}?titleFilter=Meow`).expect(200);
 
@@ -94,7 +100,7 @@ describe('BookModule (e2e)', () => {
 			});
 
 			it('should return filtered books by category', async () => {
-				await bookSeeder(prisma);
+				await bookSeeder(prisma, bookData);
 
 				const res = await request(app.getHttpServer())
 					.get(`${route}?bookCategoryFilter=Machine Learning`)
@@ -108,7 +114,7 @@ describe('BookModule (e2e)', () => {
 			});
 
 			it('should return sorted books by year desc', async () => {
-				await bookSeeder(prisma);
+				await bookSeeder(prisma, bookData);
 
 				const res = await request(app.getHttpServer()).get(`${route}?yearSort=desc`).expect(200);
 
@@ -120,7 +126,7 @@ describe('BookModule (e2e)', () => {
 			});
 
 			it('should return sorted books by book location desc', async () => {
-				await bookSeeder(prisma);
+				await bookSeeder(prisma, bookData);
 
 				const res = await request(app.getHttpServer())
 					.get(`${route}?bookLocationSort=desc`)
@@ -134,7 +140,7 @@ describe('BookModule (e2e)', () => {
 			});
 
 			it('should return books with combinated filter and sort queries', async () => {
-				await bookSeeder(prisma);
+				await bookSeeder(prisma, bookData);
 
 				const res = await request(app.getHttpServer())
 					.get(`${route}?bookCategoryFilter=Programming&yearSort=desc`)
@@ -184,7 +190,7 @@ describe('BookModule (e2e)', () => {
 
 			it('should update book successfully', async () => {
 				await adminSeeder(prisma);
-				await bookSeeder(prisma);
+				await bookSeeder(prisma, bookData);
 
 				const token = await login(app);
 
@@ -213,7 +219,7 @@ describe('BookModule (e2e)', () => {
 
 			it('should delete book successfully', async () => {
 				await adminSeeder(prisma);
-				await bookSeeder(prisma);
+				await bookSeeder(prisma, bookData);
 
 				const token = await login(app);
 
@@ -270,7 +276,7 @@ describe('BookModule (e2e)', () => {
 			const route = '/api/book';
 
 			it('should throw 401 if not authenticated', async () => {
-				await bookSeeder(prisma);
+				await bookSeeder(prisma, bookData);
 
 				const book = await prisma.book.findFirst();
 
@@ -299,7 +305,7 @@ describe('BookModule (e2e)', () => {
 			});
 
 			it('should throw 400 if validation fail', async () => {
-				await bookSeeder(prisma);
+				await bookSeeder(prisma, bookData);
 				await adminSeeder(prisma);
 
 				const token = await login(app);
@@ -324,7 +330,7 @@ describe('BookModule (e2e)', () => {
 			const route = '/api/book';
 
 			it('should throw 401 if not authenticated', async () => {
-				await bookSeeder(prisma);
+				await bookSeeder(prisma, bookData);
 
 				const book = await prisma.book.findFirst();
 
