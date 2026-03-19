@@ -31,6 +31,7 @@ import { randomUUID } from 'node:crypto';
 										mkdir: true,
 									},
 								},
+						// : undefined,
 
 						redact: {
 							paths: [

@@ -1,0 +1,84 @@
+# For temporary use, will be updated soon to fix the errors and optimize the build process.
+
+services:
+  # api:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   container_name: book-api-prod
+  #   restart: unless-stopped
+  #   env_file:
+  #     - .env.production
+  #   ports:
+  #     - "${PORT}:3000"
+  #   environment:
+  #     NODE_ENV: production
+  #     DATABASE_URL: ${DATABASE_URL}
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   networks:
+  #     - backend
+  #   command: >
+  #     sh -c "
+  #     pnpm prisma:migrate:deploy &&
+  #     node dist/main.js
+  #     "
+
+  db:
+    image: postgres:16
+    container_name: book-pg-prod
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - postgres_book_data:/var/lib/postgresql/data
+      - ./logs:/app/logs
+    command: >
+      postgres
+      -c shared_buffers=512MB
+      -c work_mem=32MB
+      -c maintenance_work_mem=256MB
+      -c max_connections=50
+      -c wal_buffers=16MB
+      -c checkpoint_completion_target=0.9
+      -c effective_cache_size=1GB
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    # networks:
+    #   - backend
+
+  # seed:
+  #   build: 
+  #     context: .
+  #     target: builder
+  #   command: npx prisma db seed
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   networks:
+  #     - backend
+
+  # heavy-seed:
+  #   build:
+  #     context: .
+  #     target: builder
+  #   command: npx ts-node -r tsconfig-paths/register prisma/seeds/heavy-book/seed
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   networks:
+  #     - backend
+
+volumes:
+  postgres_book_data:
+
+# networks:
+#   backend:
