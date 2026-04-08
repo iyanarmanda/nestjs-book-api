@@ -9,8 +9,8 @@ import { bookCategorySeeder } from '$/seeds/models/book-category/book-category.s
 import { bookLocationSeeder } from '$/seeds/models/book-location/book-location.seeder';
 import { adminSeeder } from '$/seeds/models/admin/admin.seeder';
 import { bookSeeder } from '$/seeds/models/book/book.seeder';
-import { bookCategoryData } from '@/database/seeds/data/book-category.data';
-import { bookLocationData } from '@/database/seeds/data/book-location.data';
+import { bookCategoryData } from '@/bootstraps/seed/data/book-category.data';
+import { bookLocationData } from '@/bootstraps/seed/data/book-location.data';
 import { bookFactory } from './book.factory';
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
@@ -24,7 +24,7 @@ async function main(): Promise<void> {
 	await adminSeeder(prisma);
 	await bookCategorySeeder(prisma, bookCategoryData);
 	await bookLocationSeeder(prisma, bookLocationData);
-	// await bookSeeder(prisma, bookFactory);
+	await bookSeeder(prisma, bookFactory);
 
 	console.log('Dev seeding completed');
 }

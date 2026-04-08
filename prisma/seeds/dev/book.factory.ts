@@ -1,8 +1,8 @@
 import { faker } from '@faker-js/faker';
-import { bookCategoryData } from '@/database/seeds/data/book-category.data';
-import { bookLocationData } from '@/database/seeds/data/book-location.data';
+import { bookCategoryData } from '@/bootstraps/seed/data/book-category.data';
+import { bookLocationData } from '@/bootstraps/seed/data/book-location.data';
 
-import type { BookData } from '@/database/seeds/data/interfaces/book.interface';
+import type { BookData } from '@/bootstraps/seed/data/interfaces/book.interface';
 
 function randomNullable<T>(fn: () => T, probability = 0.7): T | null {
 	return Math.random() < probability ? fn() : null;

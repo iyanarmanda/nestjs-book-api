@@ -1,5 +1,5 @@
-import type { BookCategoryData } from '@/database/seeds/data/interfaces/book-category.interface';
-import type { BookLocationData } from '@/database/seeds/data/interfaces/book-location.interface';
+import type { BookCategoryData } from '@/bootstraps/seed/data/interfaces/book-category.interface';
+import type { BookLocationData } from '@/bootstraps/seed/data/interfaces/book-location.interface';
 
 export type BookData = {
 	title: string;

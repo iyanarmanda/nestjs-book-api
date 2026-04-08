@@ -1,5 +1,5 @@
 import type { PrismaClient } from '@/generated/prisma/client';
-import type { BookLocationData } from '@/database/seeds/data/interfaces/book-location.interface';
+import type { BookLocationData } from '@/bootstraps/seed/data/interfaces/book-location.interface';
 
 export async function bookLocationSeeder(
 	prisma: PrismaClient,

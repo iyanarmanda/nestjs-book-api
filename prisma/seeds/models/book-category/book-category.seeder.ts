@@ -1,5 +1,5 @@
 import type { PrismaClient } from '@/generated/prisma/client';
-import type { BookCategoryData } from '@/database/seeds/data/interfaces/book-category.interface';
+import type { BookCategoryData } from '@/bootstraps/seed/data/interfaces/book-category.interface';
 
 export async function bookCategorySeeder(
 	prisma: PrismaClient,

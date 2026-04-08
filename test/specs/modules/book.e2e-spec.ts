@@ -13,9 +13,9 @@ import { bookSeeder } from '$/seeds/models/book/book.seeder';
 import { adminSeeder } from '$/seeds/models/admin/admin.seeder';
 import { trucateDatabase } from '$/helper/truncate';
 import { login } from '#/helper/auth.helper';
-import { bookData } from '#/seeds/data/book.data';
-import { bookLocationData } from '#/seeds/data/book-location.data';
-import { bookCategoryData } from '#/seeds/data/book-category.data';
+import { bookData } from '#/seed/data/book.data';
+import { bookLocationData } from '#/seed/data/book-location.data';
+import { bookCategoryData } from '#/seed/data/book-category.data';
 
 import type { App } from 'supertest/types';
 import type { TestingModule } from '@nestjs/testing';
