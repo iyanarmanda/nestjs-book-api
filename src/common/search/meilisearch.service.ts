@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { PinoLogger } from 'nestjs-pino';
 import { MeiliSearch } from 'meilisearch';
 
-import type { Stats } from 'meilisearch';
+import type { Index, RecordAny, Stats } from 'meilisearch';
 
 @Injectable()
 export class MeilisearchService implements OnModuleInit {
@@ -50,6 +50,10 @@ export class MeilisearchService implements OnModuleInit {
 
 	getClient(): MeiliSearch {
 		return this.client;
+	}
+
+	index(indexName: string): Index<RecordAny> {
+		return this.client.index(indexName);
 	}
 
 	async getStats(): Promise<Stats> {

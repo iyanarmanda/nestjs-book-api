@@ -1,10 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { PinoLogger } from 'nestjs-pino';
 import { BaseService } from '@/common/services/base.service';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { Prisma } from '@/generated/prisma/client';
 import { BookCategoryService } from '@/modules/book-category/book-category.service';
 import { BookLocationService } from '@/modules/book-location/book-location.service';
+import { EVENT } from '@/modules/search/constants/event.constant';
+import { BookCreatedEvent } from './events/book-created.event';
+import { BookDeletedEvent } from './events/book-deleted.event';
+import { BookUpdatedEvent } from './events/book-updated.event';
 
 import type { Book } from '@/generated/prisma/client';
 import type { CreateBookDto } from './schemas/create-book.schema';
@@ -18,6 +23,7 @@ export class BookService extends BaseService {
 		private readonly prisma: PrismaService,
 		private readonly bookCategoryService: BookCategoryService,
 		private readonly bookLocationService: BookLocationService,
+		private readonly eventEmitter: EventEmitter2,
 		readonly logger: PinoLogger,
 	) {
 		super(logger);
@@ -139,7 +145,20 @@ export class BookService extends BaseService {
 					},
 				},
 			},
+			include: {
+				bookCategory: true,
+				bookLocation: true,
+			},
 		});
+
+		this.eventEmitter.emit(
+			EVENT.BOOK.CREATED,
+			new BookCreatedEvent({
+				...book,
+				category: book.bookCategory.name,
+				bookLocation: book.bookLocation.name,
+			}),
+		);
 
 		this.logger.info(
 			{
@@ -210,7 +229,20 @@ export class BookService extends BaseService {
 					},
 				}),
 			},
+			include: {
+				bookCategory: true,
+				bookLocation: true,
+			},
 		});
+
+		this.eventEmitter.emit(
+			EVENT.BOOK.UPDATED,
+			new BookUpdatedEvent({
+				...book,
+				category: book.bookCategory.name,
+				bookLocation: book.bookLocation.name,
+			}),
+		);
 
 		this.logger.info(
 			{
@@ -229,6 +261,8 @@ export class BookService extends BaseService {
 		const deletedBook = await this.prisma.book.delete({
 			where: { id },
 		});
+
+		this.eventEmitter.emit(EVENT.BOOK.DELETED, new BookDeletedEvent(id));
 
 		this.logger.info(
 			{

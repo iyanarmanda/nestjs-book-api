@@ -24,7 +24,7 @@ async function main(): Promise<void> {
 	await adminSeeder(prisma);
 	await bookCategorySeeder(prisma, bookCategoryData);
 	await bookLocationSeeder(prisma, bookLocationData);
-	await bookSeeder(prisma, bookFactory);
+	// await bookSeeder(prisma, bookFactory);
 
 	console.log('Dev seeding completed');
 }

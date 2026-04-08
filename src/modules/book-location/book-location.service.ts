@@ -1,8 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { PinoLogger } from 'nestjs-pino';
 import { BaseService } from '@/common/services/base.service';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { Prisma } from '@/generated/prisma/client';
+import { EVENT } from '@/modules/search/constants/event.constant';
+import { BookLocationUpdatedEvent } from './events/book-location-updated.event';
 
 import type { BookLocation } from '@/generated/prisma/client';
 
@@ -10,6 +13,7 @@ import type { BookLocation } from '@/generated/prisma/client';
 export class BookLocationService extends BaseService {
 	constructor(
 		private readonly prisma: PrismaService,
+		private readonly eventEmitter: EventEmitter2,
 		readonly logger: PinoLogger,
 	) {
 		super(logger);
@@ -41,7 +45,24 @@ export class BookLocationService extends BaseService {
 		const bookLocation = await this.prisma.bookLocation.update({
 			where: { id },
 			data: body,
+			include: {
+				books: {
+					select: {
+						id: true,
+					},
+				},
+			},
 		});
+
+		if (bookLocation.books.length > 0) {
+			this.eventEmitter.emit(
+				EVENT.BOOK_LOCATION.UPDATED,
+				new BookLocationUpdatedEvent({
+					...bookLocation,
+					bookIds: bookLocation.books.map((book) => book.id),
+				}),
+			);
+		}
 
 		this.logger.info(
 			{
