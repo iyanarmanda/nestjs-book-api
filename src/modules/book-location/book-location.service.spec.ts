@@ -7,9 +7,6 @@ import { BookLocationService } from './book-location.service';
 import { mockPrisma } from 'mocks/@/generated/prisma/client';
 import { mockLogger } from '@/testing/mocks/logger';
 import { expectHttpException } from '@/testing/helpers/expect-http-exception';
-import { EventEmitter2 } from '@nestjs/event-emitter';
-import { mockEventEmitter } from '@/testing/mocks/eventEmitter';
-import { EVENT } from '../search/constants/event.constant';
 
 describe('BookLocationService', () => {
 	let service: BookLocationService;
@@ -27,10 +24,6 @@ describe('BookLocationService', () => {
 				{
 					provide: PinoLogger,
 					useValue: mockLogger,
-				},
-				{
-					provide: EventEmitter2,
-					useValue: mockEventEmitter,
 				},
 			],
 		}).compile();
@@ -83,50 +76,13 @@ describe('BookLocationService', () => {
 		// update
 		describe('update', () => {
 			it('should update book location successfully', async () => {
-				const updatedBookLocation = {
-					id: 1,
-					name: 'E-05',
-					books: [],
-				};
+				const updatedBookLocation = { id: 1, name: 'E-05' };
 
 				mockPrisma.bookLocation.update.mockResolvedValue(updatedBookLocation);
 
 				const result = await service.update(updatedBookLocation.id, { name: 'E-05' });
 
 				expect(mockPrisma.bookLocation.update).toHaveBeenCalled();
-				expect(mockEventEmitter.emit).not.toHaveBeenCalled();
-				expect(mockLogger.info).toHaveBeenCalledWith(
-					expect.objectContaining({
-						event: 'BOOK_LOCATION_UPDATE',
-						action: 'UPDATE_BOOK_LOCATION',
-						bookLocationIdTarget: updatedBookLocation.id,
-						success: true,
-					}),
-					'Book Location updated',
-				);
-				expect(result).toEqual(updatedBookLocation);
-			});
-
-			it('should update book location and call event successfully', async () => {
-				const updatedBookLocation = {
-					id: 1,
-					name: 'E-05',
-					books: [
-						{
-							id: 1,
-						},
-					],
-				};
-
-				mockPrisma.bookLocation.update.mockResolvedValue(updatedBookLocation);
-
-				const result = await service.update(updatedBookLocation.id, { name: 'E-05' });
-
-				expect(mockPrisma.bookLocation.update).toHaveBeenCalled();
-				expect(mockEventEmitter.emit).toHaveBeenCalledWith(
-					EVENT.BOOK_LOCATION.UPDATED,
-					expect.any(Object),
-				);
 				expect(mockLogger.info).toHaveBeenCalledWith(
 					expect.objectContaining({
 						event: 'BOOK_LOCATION_UPDATE',

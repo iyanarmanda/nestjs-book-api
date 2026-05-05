@@ -1,14 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BadRequestException } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { PinoLogger } from 'nestjs-pino';
 import { PrismaService } from '@/common/prisma/prisma.service';
-import { EVENT } from '@/modules/search/constants/event.constant';
 import { BookCategoryService } from './book-category.service';
 
 import { mockPrisma } from 'mocks/@/generated/prisma/client';
 import { mockLogger } from '@/testing/mocks/logger';
-import { mockEventEmitter } from '@/testing/mocks/eventEmitter';
 import { expectHttpException } from '@/testing/helpers/expect-http-exception';
 
 describe('BookCategoryService', () => {
@@ -27,10 +24,6 @@ describe('BookCategoryService', () => {
 				{
 					provide: PinoLogger,
 					useValue: mockLogger,
-				},
-				{
-					provide: EventEmitter2,
-					useValue: mockEventEmitter,
 				},
 			],
 		}).compile();
@@ -83,50 +76,13 @@ describe('BookCategoryService', () => {
 		// update
 		describe('update', () => {
 			it('should update book category successfully', async () => {
-				const updatedBookCategory = {
-					id: 1,
-					name: 'Computer',
-					books: [],
-				};
+				const updatedBookCategory = { id: 1, name: 'Computer' };
 
 				mockPrisma.bookCategory.update.mockResolvedValue(updatedBookCategory);
 
 				const result = await service.update(updatedBookCategory.id, { name: 'Computer' });
 
 				expect(mockPrisma.bookCategory.update).toHaveBeenCalled();
-				expect(mockEventEmitter.emit).not.toHaveBeenCalled();
-				expect(mockLogger.info).toHaveBeenCalledWith(
-					expect.objectContaining({
-						event: 'BOOK_CATEGORY_UPDATE',
-						action: 'UPDATE_BOOK_CATEGORY',
-						bookCategoryIdTarget: updatedBookCategory.id,
-						success: true,
-					}),
-					'Book Category updated',
-				);
-				expect(result).toEqual(updatedBookCategory);
-			});
-
-			it('should update book category and call event successfully', async () => {
-				const updatedBookCategory = {
-					id: 1,
-					name: 'Computer',
-					books: [
-						{
-							id: 1,
-						},
-					],
-				};
-
-				mockPrisma.bookCategory.update.mockResolvedValue(updatedBookCategory);
-
-				const result = await service.update(updatedBookCategory.id, { name: 'Computer' });
-
-				expect(mockPrisma.bookCategory.update).toHaveBeenCalled();
-				expect(mockEventEmitter.emit).toHaveBeenCalledWith(
-					EVENT.BOOK_CATEGORY.UPDATED,
-					expect.any(Object),
-				);
 				expect(mockLogger.info).toHaveBeenCalledWith(
 					expect.objectContaining({
 						event: 'BOOK_CATEGORY_UPDATE',

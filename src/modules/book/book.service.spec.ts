@@ -1,16 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { PinoLogger } from 'nestjs-pino';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { BookCategoryService } from '@/modules/book-category/book-category.service';
 import { BookLocationService } from '@/modules/book-location/book-location.service';
-import { EVENT } from '@/modules/search/constants/event.constant';
 import { BookService } from './book.service';
 
 import { mockPrisma } from 'mocks/@/generated/prisma/client';
 import { mockLogger } from '@/testing/mocks/logger';
-import { mockEventEmitter } from '@/testing/mocks/eventEmitter';
 import { expectHttpException } from '@/testing/helpers/expect-http-exception';
 
 describe('BookService', () => {
@@ -40,10 +37,6 @@ describe('BookService', () => {
 				{
 					provide: PinoLogger,
 					useValue: mockLogger,
-				},
-				{
-					provide: EventEmitter2,
-					useValue: mockEventEmitter,
 				},
 			],
 		}).compile();
@@ -202,16 +195,7 @@ describe('BookService', () => {
 				mockBookCategoryService.findUnique.mockResolvedValue({ name: dto.category });
 				mockBookLocationService.findUnique.mockResolvedValue({ name: dto.location });
 
-				const createdBook = {
-					id: 1,
-					...bookDto,
-					bookCategory: {
-						name: dto.category,
-					},
-					bookLocation: {
-						name: dto.location,
-					},
-				};
+				const createdBook = { id: 1, ...bookDto };
 				mockPrisma.book.create.mockResolvedValue(createdBook);
 
 				const result = await service.create(bookDto);
@@ -219,7 +203,6 @@ describe('BookService', () => {
 				expect(mockBookCategoryService.findUnique).toHaveBeenCalledWith(dto.category);
 				expect(mockBookLocationService.findUnique).toHaveBeenCalledWith(dto.location);
 				expect(mockPrisma.book.create).toHaveBeenCalled();
-				expect(mockEventEmitter.emit).toHaveBeenCalledWith(EVENT.BOOK.CREATED, expect.any(Object));
 				expect(mockLogger.info).toHaveBeenCalledWith(
 					expect.objectContaining({
 						event: 'BOOK_CREATE',
@@ -248,12 +231,6 @@ describe('BookService', () => {
 				const updatedBook = {
 					id: 1,
 					...dto,
-					bookCategory: {
-						name: dto.category,
-					},
-					bookLocation: {
-						name: dto.location,
-					},
 				};
 				mockPrisma.book.update.mockResolvedValue(updatedBook);
 
@@ -266,7 +243,6 @@ describe('BookService', () => {
 				expect(mockBookCategoryService.findUnique).toHaveBeenCalledWith(dto.category);
 				expect(mockBookLocationService.findUnique).toHaveBeenCalledWith(dto.location);
 				expect(mockPrisma.book.update).toHaveBeenCalled();
-				expect(mockEventEmitter.emit).toHaveBeenCalledWith(EVENT.BOOK.UPDATED, expect.any(Object));
 				expect(mockLogger.info).toHaveBeenCalledWith(
 					expect.objectContaining({
 						event: 'BOOK_UPDATE',
@@ -289,7 +265,6 @@ describe('BookService', () => {
 				const result = await service.delete(1);
 
 				expect(mockPrisma.book.delete).toHaveBeenCalled();
-				expect(mockEventEmitter.emit).toHaveBeenCalledWith(EVENT.BOOK.DELETED, expect.any(Object));
 				expect(mockLogger.info).toHaveBeenCalledWith(
 					expect.objectContaining({
 						event: 'BOOK_DELETE',
@@ -327,7 +302,6 @@ describe('BookService', () => {
 					'Missing Book Category on create',
 				);
 				expect(mockPrisma.book.create).not.toHaveBeenCalled();
-				expect(mockEventEmitter.emit).not.toHaveBeenCalled();
 			});
 
 			it('should throw if book location not found', async () => {
@@ -352,7 +326,6 @@ describe('BookService', () => {
 					'Missing Book Location on create',
 				);
 				expect(mockPrisma.book.create).not.toHaveBeenCalled();
-				expect(mockEventEmitter.emit).not.toHaveBeenCalled();
 			});
 		});
 
@@ -378,7 +351,6 @@ describe('BookService', () => {
 					'Missing Book Category on update',
 				);
 				expect(mockPrisma.book.update).not.toHaveBeenCalled();
-				expect(mockEventEmitter.emit).not.toHaveBeenCalled();
 			});
 
 			it('should throw if update book location not found', async () => {
@@ -401,7 +373,6 @@ describe('BookService', () => {
 					'Missing Book Location on update',
 				);
 				expect(mockPrisma.book.update).not.toHaveBeenCalled();
-				expect(mockEventEmitter.emit).not.toHaveBeenCalled();
 			});
 		});
 	});
