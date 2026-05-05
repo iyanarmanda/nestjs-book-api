@@ -13,21 +13,6 @@ import { z } from 'zod';
 					NODE_ENV: z.enum(['production', 'development', 'test']).default('production'),
 
 					DATABASE_URL: z.string(),
-					POSTGRES_USER: z.string(),
-					POSTGRES_PASSWORD: z.string(),
-					POSTGRES_DB: z.string(),
-					POSTGRES_PORT: z.preprocess(
-						(val) => (val ? Number(val) : undefined),
-						z.number().default(5432),
-					),
-
-					MEILI_MASTER_KEY: z.string(),
-					MEILI_ENV: z.enum(['production', 'development', 'test']).default('production'),
-					MEILI_HOST: z.string(),
-					MEILI_PORT: z.preprocess(
-						(val) => (val ? Number(val) : undefined),
-						z.number().default(7700),
-					),
 
 					ADMIN_PASSWORD: z.string(),
 					PASSWORD_PEPPER: z.string(),

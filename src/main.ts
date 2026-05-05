@@ -23,7 +23,7 @@ async function bootstrap() {
 
 	app.useGlobalFilters(new PrismaExceptionFilter());
 
-	const port = configService.get<number>('PORT', 3000);
+	const port = configService.get<number>('PORT') ?? 3000;
 	await app.listen(port, '0.0.0.0');
 }
 bootstrap();

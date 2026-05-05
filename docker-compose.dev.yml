@@ -1,5 +1,4 @@
 # readiness check: docker exec book-pg-dev pg_isready -U postgres
-# meilisearch check: curl http://localhost:7700/health
 
 services:
   db:
@@ -29,23 +28,5 @@ services:
       timeout: 5s
       retries: 5
 
-  search:
-    image: getmeili/meilisearch:latest
-    container_name: book-search-dev
-    restart: unless-stopped
-    ports:
-      - "${MEILI_PORT}:7700"
-    environment:
-      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY}
-      MEILI_ENV: development
-    volumes:
-      - meili_dev_data:/meili_data
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:7700/health"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
 volumes:
   postgres_dev_data:
-  meili_dev_data:
