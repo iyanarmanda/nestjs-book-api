@@ -13,7 +13,7 @@ import { adminSeeder } from '../models/admin/admin.seeder';
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter });
 
-const TOTAL = 1_000_000;
+const TOTAL = 100_000;
 
 async function main(): Promise<void> {
 	console.log('Start heavy seeding...');

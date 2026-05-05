@@ -33,7 +33,7 @@
 		"prisma:migrate:test": "cross-env NODE_ENV=test prisma migrate deploy",
 		"prisma:seed:dev": "cross-env NODE_ENV=development ts-node -r tsconfig-paths/register prisma/seeds/dev/seed",
 		"prisma:seed:prod": "docker compose --env-file .env.production -f docker-compose.prod.yml run --rm seed",
-		"prisma:seed:heavy": "cross-env NODE_ENV=production ts-node -r tsconfig-paths/register prisma/seeds/heavy-book/seed",
+		"prisma:seed:heavy": "docker compose --env-file .env.production -f docker-compose.prod.yml run --rm heavy-seed",
 		"prisma:db:clear": "ts-node -r tsconfig-paths/register prisma/scripts/trucate.run",
 		"prisma:studio": "cross-env NODE_ENV=development prisma studio",
 		"docker:dev:up": "docker compose --env-file .env.development -f docker-compose.dev.yml up -d",
@@ -52,6 +52,8 @@
 		"bench": "autocannon",
 		"bench:simple": "ts-node -r tsconfig-paths/register bench/simple.bench",
 		"bench:search": "ts-node -r tsconfig-paths/register bench/search.bench",
+		"bench:filter": "ts-node -r tsconfig-paths/register bench/filter.bench",
+		"bench:pagination": "ts-node -r tsconfig-paths/register bench/pagination.bench",
 		"bench:heavy": "ts-node -r tsconfig-paths/register bench/heavy.bench"
 	},
 	"dependencies": {

@@ -2,4 +2,4 @@ import { runBench } from './run';
 
 console.log('start search benchmark');
 
-runBench(`titleFilter=Code`);
+runBench(`titleFilter=harry&limit=20`);

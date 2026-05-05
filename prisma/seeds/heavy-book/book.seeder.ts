@@ -29,7 +29,7 @@ export async function bookSeeder(
 ): Promise<void> {
 	console.log('Seeding books...');
 
-	const batchSize = 100;
+	const batchSize = 1000;
 
 	for (let i = 0; i < total; i += batchSize) {
 		const batch = [];
