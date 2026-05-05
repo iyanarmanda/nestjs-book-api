@@ -5,6 +5,7 @@ import { ThrottlerGuard } from '@nestjs/throttler';
 import { CoreModule } from '@/core/core.module';
 import { AuthModule } from '@/modules/auth/auth.module';
 import { BookModule } from '@/modules/book/book.module';
+import { SearchModule } from '@/modules/search/search.module';
 import { PrismaExceptionFilter } from '@/config/filters/prisma-exception.filter';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { bookCategorySeeder } from '$/seeds/models/book-category/book-category.seeder';
@@ -27,7 +28,7 @@ describe('BookModule (e2e)', () => {
 
 	beforeAll(async () => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
-			imports: [CoreModule, AuthModule, BookModule],
+			imports: [CoreModule, AuthModule, BookModule, SearchModule],
 		})
 			.overrideGuard(ThrottlerGuard)
 			.useValue({
