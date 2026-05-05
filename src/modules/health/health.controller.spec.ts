@@ -8,8 +8,6 @@ describe('HealthController', () => {
 	const mockHealthService = {
 		apiCheck: jest.fn(),
 		dbCheck: jest.fn(),
-		searchCheck: jest.fn(),
-		searchStats: jest.fn(),
 	};
 
 	beforeEach(async () => {
@@ -58,30 +56,6 @@ describe('HealthController', () => {
 			const result = await controller.dbCheck();
 
 			expect(mockHealthService.dbCheck).toHaveBeenCalled();
-			expect(result).toEqual(mockResponse);
-		});
-	});
-
-	// searchCheck
-	describe('searchCheck', () => {
-		it('should return response of search engine health', async () => {
-			mockHealthService.searchCheck.mockResolvedValue(mockResponse);
-
-			const result = await controller.searchCheck();
-
-			expect(mockHealthService.searchCheck).toHaveBeenCalled();
-			expect(result).toEqual(mockResponse);
-		});
-	});
-
-	// searchStats
-	describe('searchStats', () => {
-		it('should return response of search engine stats', async () => {
-			mockHealthService.searchStats.mockResolvedValue(mockResponse);
-
-			const result = await controller.searchStats();
-
-			expect(mockHealthService.searchStats).toHaveBeenCalled();
 			expect(result).toEqual(mockResponse);
 		});
 	});
