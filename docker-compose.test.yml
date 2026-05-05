@@ -1,3 +1,5 @@
+# readiness check: docker exec book-pg-test pg_isready -U postgres
+
 services:
   db:
     image: postgres:16
@@ -16,27 +18,3 @@ services:
       -c full_page_writes=off
     tmpfs:
       - /var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
-      interval: 2s
-      timeout: 3s
-      retries: 10
-      start_period: 2s
-
-  search:
-    image: getmeili/meilisearch:v1.35.1
-    restart: no
-    container_name: book-search-test
-    ports:
-      - "${MEILI_PORT}:7700"
-    environment:
-      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY}
-      MEILI_ENV: ${MEILI_ENV}
-    tmpfs:
-      - /meili_data
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:7700/health"]
-      interval: 2s
-      timeout: 3s
-      retries: 10
-      start_period: 2s

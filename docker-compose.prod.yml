@@ -55,25 +55,6 @@ services:
     # networks:
     #   - backend
 
-  search:
-    image: getmeili/meilisearch:v1.35.1
-    container_name: book-search-prod
-    restart: unless-stopped
-    environment:
-      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY}
-      MEILI_ENV: ${MEILI_ENV}
-    ports:
-      - "${MEILI_PORT}:7700"
-    volumes:
-      - meili_dev_data:/meili_data
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:7700/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    # networks:
-    #   - backend
-
   # seed:
   #   build: 
   #     context: .
@@ -98,7 +79,6 @@ services:
 
 volumes:
   postgres_book_data:
-  meili_dev_data:
 
 # networks:
 #   backend:

@@ -37,7 +37,7 @@ services:
       - "${MEILI_PORT}:7700"
     environment:
       MEILI_MASTER_KEY: ${MEILI_MASTER_KEY}
-      MEILI_ENV: ${MEILI_ENV}
+      MEILI_ENV: development
     deploy:
       resources:
         limits:

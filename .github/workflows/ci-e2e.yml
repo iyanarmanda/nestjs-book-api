@@ -30,8 +30,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Create and check docker container
-        run: pnpm docker:test:wait
+      - name: Create docker container
+        run: pnpm docker:test:up
 
       - name: Prisma init
         run: pnpm prisma:init:test
